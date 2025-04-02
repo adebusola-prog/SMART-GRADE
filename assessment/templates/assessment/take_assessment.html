@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ assessment.title }}</h2>
+<p>{{ assessment.description }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    {% for question in assessment.questions.all %}
+        <p><strong>{{ question.text }}</strong></p>
+        {% for choice in question.choices.all %}
+            <input type="{% if question.question_type == 'single_choice' %}radio{% else %}checkbox{% endif %}" 
+                   name="question_{{ question.id }}" 
+                   value="{{ choice.id }}">
+            {{ choice.text }} <br>
+        {% endfor %}
+    {% endfor %}
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

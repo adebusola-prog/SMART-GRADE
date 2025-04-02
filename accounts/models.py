@@ -1,9 +1,6 @@
 from base import constants
-from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
-                                        PermissionsMixin)
-from django.core.validators import RegexValidator
+from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin)
 from django.db import models
-from django.db.models.query import QuerySet
 from django.urls import reverse
 from PIL import Image
 
@@ -60,6 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Student(DeletableBaseModel):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='students')
+    teachers = models.ManyToManyField("Teacher", related_name="students")  # Many-to-Many Relationship
     is_current= models.BooleanField(default=True)
     
     def get_full_name(self) -> str:

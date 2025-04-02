@@ -184,8 +184,10 @@ User = get_user_model()
      
 class LoginForm(forms.Form):
     email = forms.EmailField(max_length=150, 
-                             widget=forms.EmailInput(attrs={'class': 'form-control form-control-lg', 'id': 'email', 'placeholder': 'Enter Email Address'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control form-control-lg', 'id': 'password', 'placeholder': 'Enter Password'}))
+                             widget=forms.EmailInput(attrs={'class': 'form-control form-control-lg', 
+                            'id': 'email', 'placeholder': 'Enter Email Address'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control form-control-lg', 'id': 'password', 
+                            'placeholder': 'Enter Password'}))
 
 
 class CustomSetPasswordForm(SetPasswordForm):
