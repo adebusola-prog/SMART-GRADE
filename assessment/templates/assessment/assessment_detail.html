@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ assessment.title }}</h2>
+<p><strong>Description:</strong> {{ assessment.description }}</p>
+<hr>
+<h3>Questions</h3>
+<ul>
+    {% for question in questions %}
+    <li>
+        {{ question.text }} ({{ question.get_question_type_display }})
+        <a href="{% url 'assessment:add_choice' question.id %}">Add Choices</a>
+    </li>
+    {% empty %}
+    <p>No questions added yet.</p>
+    {% endfor %}
+</ul>
+
+<h3>Add New Question</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Question</button>
+</form>
+{% endblock %}

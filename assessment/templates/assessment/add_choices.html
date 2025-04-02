@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add Choices for: "{{ question.text }}"</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    {% for form in formset %}
+        <div class="choice-form">
+            {{ form.as_p }}
+        </div>
+    {% endfor %}
+    <button type="submit">Save Choices</button>
+</form>
+{% endblock %}

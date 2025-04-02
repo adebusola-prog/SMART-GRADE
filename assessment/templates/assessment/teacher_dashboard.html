@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Teacher Dashboard</h2>
+<a href="{% url 'assessment:create_assessment' %}">Create New Assessment</a>
+<hr>
+<h3>Your Assessments</h3>
+<ul>
+    {% for assessment in assessments %}
+    <li>
+        <a href="{% url 'assessment:assessment_detail' assessment.id %}">{{ assessment.title }}</a>
+    </li>
+    {% empty %}
+    <p>No assessments created yet.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

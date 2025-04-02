@@ -4,7 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 
 from .models import Teacher, Student, Assessment, Question, Choice, Submission, Answer
-from .forms import AssessmentForm, QuestionForm, ChoiceForm, SubmissionForm
+from .forms import AssessmentForm, QuestionForm, ChoiceFormSet, SubmissionForm
 
 
 def teacher_required(view_func):
@@ -22,7 +22,7 @@ def student_required(view_func):
     return _wrapped_view
 
 @login_required
-# @teacher_required
+@teacher_required
 def create_assessment(request):
     """View for teachers to create an assessment"""
     if request.method == "POST":
@@ -49,7 +49,7 @@ def edit_assessment(request, assessment_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Assessment updated successfully!")
-            return redirect("teacher_dashboard")
+            return redirect("assessment:teacher_dashboard")
     else:
         form = AssessmentForm(instance=assessment)
 
@@ -96,30 +96,50 @@ def add_question(request, assessment_id):
             question.assessment = assessment
             question.save()
             messages.success(request, "Question added successfully!")
-            return redirect("edit_assessment", assessment_id=assessment.id)
+            return redirect("assessment:edit_assessment", assessment_id=assessment.id)
     else:
         form = QuestionForm()
 
     return render(request, "assessment/add_question.html", {"form": form, "assessment": assessment})
 
+# @login_required
+# @teacher_required
+# def add_choice(request, question_id):
+#     """View for teachers to add a choice to a question"""
+#     question = get_object_or_404(Question, id=question_id, assessment__teacher=request.user.teacher)
+
+#     if request.method == "POST":
+#         form = ChoiceForm(request.POST)
+#         if form.is_valid():
+#             choice = form.save(commit=False)
+#             choice.question = question
+#             choice.save()
+#             messages.success(request, "Choice added successfully!")
+#             return redirect("assessment:edit_assessment", assessment_id=question.assessment.id)
+#     else:
+#         form = ChoiceForm()
+
+#     return render(request, "assessment/add_choice.html", {"form": form, "question": question})
+
 @login_required
-@teacher_required
-def add_choice(request, question_id):
-    """View for teachers to add a choice to a question"""
+def add_choices(request, question_id):
+    """Allows teachers to add multiple choices at once"""
     question = get_object_or_404(Question, id=question_id, assessment__teacher=request.user.teacher)
 
     if request.method == "POST":
-        form = ChoiceForm(request.POST)
-        if form.is_valid():
-            choice = form.save(commit=False)
-            choice.question = question
-            choice.save()
-            messages.success(request, "Choice added successfully!")
-            return redirect("edit_assessment", assessment_id=question.assessment.id)
+        formset = ChoiceFormSet(request.POST, queryset=Choice.objects.filter(question=question))
+        if formset.is_valid():
+            choices = formset.save(commit=False)
+            for choice in choices:
+                choice.question = question
+                choice.save()
+            messages.success(request, "Choices added successfully!")
+            return redirect("assessment:assessment_detail", assessment_id=question.assessment.id)
     else:
-        form = ChoiceForm()
+        formset = ChoiceFormSet(queryset=Choice.objects.filter(question=question))
 
-    return render(request, "assessment/add_choice.html", {"form": form, "question": question})
+    return render(request, "assessment/add_choices.html", {"formset": formset, "question": question})
+
 
 @login_required
 def teacher_dashboard(request):
@@ -145,7 +165,7 @@ def assessment_detail(request, assessment_id):
             question.assessment = assessment
             question.save()
             messages.success(request, "Question added successfully!")
-            return redirect("assessment_detail", assessment_id=assessment.id)
+            return redirect("assessment:assessment_detail", assessment_id=assessment.id)
     else:
         form = QuestionForm()
 
