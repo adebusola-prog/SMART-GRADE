@@ -2,17 +2,17 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy
 from . import views
 from .forms import CustomSetPasswordForm
-from .views import SignOutView
+# from .views import SignOutView
 
 app_name = 'accounts'
 
 urlpatterns = [
-    path('login/', views.LoginView.as_view(), name='login'),
-    path('reset_password/', 
+    path('login', views.LoginView.as_view(), name='login'),
+    path('reset_password', 
         auth_views.PasswordResetView.as_view(template_name='accounts/password_reset_form.html',email_template_name = 'accounts/password_reset_email.html', success_url=reverse_lazy('accounts:password_reset_done')), 
         name='reset_password'),
 
-    path('reset_password_sent/', 
+    path('reset_password_sent', 
         auth_views.PasswordResetDoneView.as_view(template_name='accounts/password_reset_done.html'), 
         name='password_reset_done'),
 
@@ -21,16 +21,17 @@ urlpatterns = [
         success_url=reverse_lazy('accounts:password_reset_complete') ), 
         name='password_reset_confirm'),
 
-    path('reset_password_complete/', 
+    path('reset_password_complete', 
         auth_views.PasswordResetCompleteView.as_view(template_name='accounts/password_reset_complete.html'), 
         name='password_reset_complete'),
-    path('set_password_complete/', 
+    path('set_password_complete', 
         auth_views.PasswordResetCompleteView.as_view(template_name='accounts/set_password_complete.html'), 
         name='set_password_complete'),
 
     
-    path('logout/', SignOutView.as_view(), name='logout'),
-    path('change_password/', auth_views.PasswordChangeView.as_view(template_name='accounts/change_password.html', 
+    # path('logout', SignOutView.as_view(), name='logout'),
+    path('logout', views.user_sign_out, name='logout'),
+    path('change_password', auth_views.PasswordChangeView.as_view(template_name='accounts/change_password.html', 
     success_url=reverse_lazy('accounts:login') ), name='change_password'),
     # path('change_password/', views.CustomPasswordChangeView.as_view(), name ='change_password'),
     path('set_password/<str:uidb64>/<str:token>', 

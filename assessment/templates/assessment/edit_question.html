@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="row">
+    <div class="col-md-12 grid-margin">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="page-title mb-0">Edit Question</h3>
+          <p class="mb-0 text-muted">Editing question for {{ assessment.title }}</p>
+        </div>
+        <a href="{% url 'assessment:assessment_detail' assessment.id %}" class="btn btn-secondary">
+          <i class="mdi mdi-arrow-left"></i> Back to Assessment
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-smartgrade-dark">
+          <h4 class="mb-0 text-white">Question Details</h4>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              <label for="{{ form.text.id_for_label }}" class="form-label">Question Text</label>
+              {{ form.text }}
+              {% if form.text.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.text.errors }}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="mb-3">
+              <label for="{{ form.question_type.id_for_label }}" class="form-label">Question Type</label>
+              {{ form.question_type }}
+            </div>
+            
+            <!-- <div class="mb-3">
+              <label for="{{ form.marks.id_for_label }}" class="form-label">Marks</label>
+              {{ form.marks }}
+            </div> -->
+            
+            <!-- Add more fields as needed -->
+            
+            <div class="d-flex justify-content-end mt-4">
+              <button type="submit" class="btn btn-smartgrade">
+                <i class="mdi mdi-content-save"></i> Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-smartgrade-light">
+          <h4 class="mb-0 text-white">Quick Actions</h4>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+              <i class="mdi mdi-delete"></i> Delete Question
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this question? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="#" class="btn btn-danger">
+          Delete Question
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bg-smartgrade-dark {
+    background: linear-gradient(135deg, #2c3e50, #3498db) !important;
+  }
+  .bg-smartgrade-light {
+    background: linear-gradient(135deg, #3498db, #2c3e50) !important;
+  }
+</style>
+{% endblock %}

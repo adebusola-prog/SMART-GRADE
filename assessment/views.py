@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
@@ -32,7 +34,7 @@ def create_assessment(request):
             assessment.teacher = request.user.teacher
             assessment.save()
             messages.success(request, "Assessment created successfully!")
-            return redirect("home_page")
+            return redirect("assessment:teacher_dashboard")
     else:
         form = AssessmentForm()
 
@@ -49,7 +51,7 @@ def edit_assessment(request, assessment_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Assessment updated successfully!")
-            return redirect("assessment:teacher_dashboard")
+            return redirect("assessment:assessment_detail", assessment_id)
     else:
         form = AssessmentForm(instance=assessment)
 
@@ -57,11 +59,10 @@ def edit_assessment(request, assessment_id):
 
 @login_required
 @student_required
-def take_assessment(request, assessment_id):
+def take_assessment(request, pk):
     """View for students to take an assessment"""
-    assessment = get_object_or_404(Assessment, id=assessment_id)
+    assessment = get_object_or_404(Assessment, pk=pk)
     
-    # Ensure student is taking an assessment under their assigned teacher
     if assessment.teacher not in request.user.student.teachers.all():
         raise PermissionDenied("You can only take assessments from your assigned teachers.")
 
@@ -174,3 +175,18 @@ def assessment_detail(request, assessment_id):
         "questions": questions,
         "form": form
     })
+
+class QuestionEditView(UpdateView):
+    model = Question
+    form_class = QuestionForm
+    template_name = 'assessment/edit_question.html'
+    
+    def get_success_url(self):
+        print(f"Question: {self.object}")
+        print(f"Related assessment: {self.object.assessment}")
+        return reverse_lazy('assessment:assessment_detail', kwargs={'assessment_id': self.object.assessment.id})
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['assessment'] = self.object.assessment
+        return context

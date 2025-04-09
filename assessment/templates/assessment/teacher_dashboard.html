@@ -1,17 +1,107 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Teacher Dashboard</h2>
-<a href="{% url 'assessment:create_assessment' %}">Create New Assessment</a>
-<hr>
-<h3>Your Assessments</h3>
-<ul>
-    {% for assessment in assessments %}
-    <li>
-        <a href="{% url 'assessment:assessment_detail' assessment.id %}">{{ assessment.title }}</a>
-    </li>
-    {% empty %}
-    <p>No assessments created yet.</p>
-    {% endfor %}
-</ul>
+<div class="content-wrapper">
+  <div class="row">
+    <div class="col-md-12 grid-margin">
+      <div class="d-flex justify-content-between align-items-center">
+        <h3 class="page-title mb-0">Teacher Dashboard</h3>
+        <p class="mb-0 text">Welcome back, {{ request.user.first_name}}!</p>
+        <a href="{% url 'assessment:create_assessment' %}" class="btn btn-smartgrade">
+          <i class="mdi mdi-plus-circle-outline"></i> Create New Assessment
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-smartgrade-dark" style="background: linear-gradient(135deg, #2c3e50, #3498db);">
+          <h4 class="mb-0 text-white">Your Assessments</h4>
+        </div>
+        <div class="card-body">
+          {% if assessments %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Created</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for assessment in assessments %}
+                <tr>
+                  <td>
+                    <a href="{% url 'assessment:assessment_detail' assessment.id %}" class="text-primary">
+                      {{ assessment.title }}
+                    </a>
+                  </td>
+                  <td>{{ assessment.created_at|date:"M d, Y" }}</td>
+                  <td>
+                    <span class="badge badge-success">Active</span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <a href="#" class="btn btn-sm btn-outline-primary">
+                        <i class="mdi mdi-eye"></i>
+                      </a>
+                      <a href="{% url 'assessment:edit_assessment' assessment.id %}" class="btn btn-sm btn-outline-secondary">
+                        <i class="mdi mdi-pencil"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i class="mdi mdi-file-document-outline mdi-48px"></i>
+            </div>
+            <h3>No Assessments Yet</h3>
+            <p class="text-muted">Get started by creating your first assessment</p>
+            <a href="{% url 'assessment:create_assessment' %}" class="btn btn-smartgrade mt-3">
+              <i class="mdi mdi-plus-circle-outline"></i> Create Assessment
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-smartgrade-light">
+          <h4 class="mb-0 text-white">Quick Actions</h4>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-3">
+            <a href="#" class="btn btn-outline-primary btn-lg text-start">
+              <i class="mdi mdi-account-multiple-plus me-2"></i> Add Students
+            </a>
+            <a href="#" class="btn btn-outline-secondary btn-lg text-start">
+              <i class="mdi mdi-chart-bar me-2"></i> View Reports
+            </a>
+            <a href="#" class="btn btn-outline-success btn-lg text-start">
+              <i class="mdi mdi-email-outline me-2"></i> Send Announcement
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+    .bg-smartgrade {
+    background: linear-gradient(135deg, #1e3c72, #2a5298) !important; 
+    border-bottom: none !important;
+    }
+</style>
 {% endblock %}
+

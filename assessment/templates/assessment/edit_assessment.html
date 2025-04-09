@@ -1,10 +1,71 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Edit Assessment</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update Assessment</button>
-</form>
+<div class="content-wrapper">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card">
+        <div class="card-header" style="background: linear-gradient(135deg, #1a3a6a, #2a5298);">
+          <h4 class="mb-0 text-white" style="text-shadow: 0 1px 2px rgba(0,0,0,0.3);">Edit Assessment</h4>
+        </div>
+        <div class="card-body">
+          <form method="POST" class="assessment-form">
+            {% csrf_token %}
+            
+            <div class="form-group row mb-4">
+              <label for="{{ form.title.id_for_label }}" class="col-sm-3 col-form-label">Assessment Title</label>
+              <div class="col-sm-9">
+                {{ form.title }}
+              </div>
+            </div>
+            
+            <div class="form-group row mb-4">
+              <label for="{{ form.description.id_for_label }}" class="col-sm-3 col-form-label">Description</label>
+              <div class="col-sm-9">
+                {{ form.description }}
+              </div>
+            </div>
+            
+            <div class="form-group row">
+              <div class="col-sm-9 offset-sm-3">
+                <button type="submit" class="btn btn-smartgrade mr-3">
+                  <i class="mdi mdi-content-save"></i> Update Assessment
+                </button>
+                <a href="{% url 'assessment:edit_assessment' assessment.id %}" class="btn btn-outline-secondary">
+                  <i class="mdi mdi-close"></i> Cancel
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .assessment-form input[type="text"],
+  .assessment-form textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s;
+  }
+  
+  .assessment-form input[type="text"]:focus,
+  .assessment-form textarea:focus {
+    border-color: #1a3a6a;
+    box-shadow: 0 0 0 0.2rem rgba(26, 58, 106, 0.25);
+  }
+  
+  .assessment-form textarea {
+    min-height: 120px;
+  }
+  
+  .col-form-label {
+    font-weight: 500;
+    color: #495057;
+  }
+</style>
 {% endblock %}

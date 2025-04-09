@@ -23,11 +23,35 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
   
   <!-- endinject -->
-  <link rel="shortcut icon" href="{% static 'assets/images/X.png' %}" />
+  <link rel="shortcut icon" href="{% static 'assets/images/image.png' %}" />
 
   <style>
     .card-grey {
       background: #54565b;
+    }
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-description {
+      color: #6c757d;
+      margin-bottom: 1.5rem;
+    }
+
+    .forms-sample .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .forms-sample .form-control {
+      padding: 0.75rem 1rem;
+      border-radius: 5px;
     }
 
     .card .dashboard-card {
@@ -48,6 +72,45 @@
 
     .card-green {
       background: #009639;
+    }
+ 
+    .bg-smartgrade-light {
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      color: var(--smartgrade-dark);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .empty-state-icon {
+      color: #cfd8dc;
+      margin-bottom: 1rem;
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: rgba(58, 123, 213, 0.05);
+    }
+
+    .btn-group .btn {
+      padding: 0.375rem 0.75rem;
+    }
+
+    .page-title {
+      font-weight: 600;
+      color: var(--smartgrade-dark);
+    }
+
+    .d-grid.gap-3 .btn {
+      border-radius: 8px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .d-grid.gap-3 .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .chart {
@@ -146,6 +209,8 @@
     }
 
     
+
+    
   </style>
   <script src="{% static 'js/messages.js' %}"></script>
 </head>
@@ -154,8 +219,8 @@
       <!-- partial:partials/_navbar.html -->
       <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style="background: #e1261c;">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <a class="navbar-brand brand-logo mr-5" href="{% url 'home_page' %}"><img src="{% static 'assets/images/logo.svg' %}" class="mr-2" alt="logo"/></a>
-          <a class="navbar-brand brand-logo-mini" href="{% url 'home_page' %}"><img src="{% static 'assets/images/logo.svg' %}" alt="logo"/></a>
+          <a class="navbar-brand brand-logo mr-5" href="{% url 'home_page' %}"><img src="{% static 'assets/images/image.png' %}" class="mr-2" alt="logo"/></a>
+          <a class="navbar-brand brand-logo-mini" href="{% url 'home_page' %}"><img src="{% static 'assets/images/image.png' %}" alt="logo"/></a>
         </div>
 
         <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
