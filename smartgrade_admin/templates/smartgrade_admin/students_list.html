@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+            <div class="d-flex justify-content-between align-items-center px-4">
+              <h6 class="text-white text-capitalize mb-0">Students Management</h6>
+              <a href="{% url 'smartgrade_admin:admin_create_student' %}" class="btn btn-sm btn-light mb-0">
+                <i class="fas fa-plus me-1"></i> Add New Student
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Student</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Class/Grade</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for student in students %}
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1">
+                      <div>
+                        {% if student.user.profile_picture %}
+                        <img src="{{ student.user.profile_picture.url }}" class="avatar avatar-sm me-3 border-radius-lg" alt="profile">
+                        {% else %}
+                        <div class="avatar avatar-sm me-3 bg-gradient-dark border-radius-lg">
+                          <span class="text-white">{{ student.user.first_name|first|upper }}{{ student.user.last_name|first|upper }}</span>
+                        </div>
+                        {% endif %}
+                      </div>
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm">{{ student.user.get_full_name }}</h6>
+                        <p class="text-xs text-secondary mb-0">{{ student.user.email }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="text-xs font-weight-bold">{{ student.grade_level|default:"Not assigned" }}</span>
+                  </td>
+                  <td>
+                    <span class="badge badge-sm bg-gradient-success">Active</span>
+                  </td>
+                  <td class="align-middle text-center text-sm">
+                    <a href="{% url 'smartgrade_admin:admin_update_student' student.id %}" class="btn btn-sm btn-outline-info mx-1" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'smartgrade_admin:admin_delete_student' student.id %}" class="btn btn-sm btn-outline-danger mx-1" title="Delete">
+                      <i class="fas fa-trash-alt"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="4" class="text-center py-4">
+                    <div class="d-flex flex-column align-items-center">
+                      <i class="fas fa-user-graduate text-secondary mb-2" style="font-size: 3rem;"></i>
+                      <h6 class="text-secondary">No students found</h6>
+                      <a href="{% url 'smartgrade_admin:admin_create_student' %}" class="btn btn-sm btn-success mt-2">
+                        <i class="fas fa-plus me-1"></i> Add Student
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bg-gradient-success {
+    background: linear-gradient(195deg, #2dce89 0%, #2dcecc 100%);
+  }
+  .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  .table thead th {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  .avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+  }
+  .avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+</style>
+{% endblock %}

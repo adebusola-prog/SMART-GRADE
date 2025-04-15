@@ -25,7 +25,8 @@ urlpatterns = [
     path('', HomePage.as_view(), name="home_page"),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls', namespace="accounts")),
-    path('assessment/', include('assessment.urls', namespace="assessment"))
+    path('assessment/', include('assessment.urls', namespace="assessment")),
+    path('sg-admin/', include('smartgrade_admin.urls', namespace='smartgrade_admin'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

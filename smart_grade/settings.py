@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 TEMPLATES_DIR = BASE_DIR / 'smart_grade' / 'templates'
 
 
@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'accounts',
-    'assessment'
+    'assessment',
+    "smartgrade_admin"
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -162,3 +163,10 @@ EMAIL_HOST_USER = "adebusolayeye@gmail.com"
 EMAIL_HOST_PASSWORD = "xklxmzfsquvvorwc"
 DEFAULT_FROM_EMAIL = "adebusolayeye@gmail.com"
 EMAIL_USE_TLS = False
+
+# deployment to render live
+import dj_database_url
+
+DATABASES = {
+    "default": dj_database_url.parse(os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'))
+}

@@ -42,6 +42,17 @@ def create_assessment(request):
 
 @login_required
 @teacher_required
+def teacher_dashboard(request):
+    """Show list of assessments created by the logged-in teacher"""
+    if not hasattr(request.user, "teacher"):
+        messages.error(request, "Only teachers can access this page.")
+        return redirect("home_page")
+
+    assessments = Assessment.objects.filter(teacher=request.user.teacher)
+    return render(request, "assessment/teacher_dashboard.html", {"assessments": assessments})
+
+@login_required
+@teacher_required
 def edit_assessment(request, assessment_id):
     """View for teachers to edit an assessment"""
     assessment = get_object_or_404(Assessment, id=assessment_id, teacher=request.user.teacher)
@@ -141,18 +152,6 @@ def add_choices(request, question_id):
 
     return render(request, "assessment/add_choices.html", {"formset": formset, "question": question})
 
-
-@login_required
-def teacher_dashboard(request):
-    """Show list of assessments created by the logged-in teacher"""
-    if not hasattr(request.user, "teacher"):
-        messages.error(request, "Only teachers can access this page.")
-        return redirect("home")
-
-    assessments = Assessment.objects.filter(teacher=request.user.teacher)
-    return render(request, "assessment/teacher_dashboard.html", {"assessments": assessments})
-
-
 @login_required
 def assessment_detail(request, assessment_id):
     """Show assessment details with existing questions & allow adding questions"""
@@ -182,8 +181,6 @@ class QuestionEditView(UpdateView):
     template_name = 'assessment/edit_question.html'
     
     def get_success_url(self):
-        print(f"Question: {self.object}")
-        print(f"Related assessment: {self.object.assessment}")
         return reverse_lazy('assessment:assessment_detail', kwargs={'assessment_id': self.object.assessment.id})
     
     def get_context_data(self, **kwargs):

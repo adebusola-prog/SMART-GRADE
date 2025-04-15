@@ -57,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Student(DeletableBaseModel):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='students')
-    teachers = models.ManyToManyField("Teacher", related_name="students")  # Many-to-Many Relationship
+    teachers = models.ManyToManyField("Teacher", related_name="students")
     is_current= models.BooleanField(default=True)
     
     def get_full_name(self) -> str:
@@ -74,7 +74,7 @@ class Student(DeletableBaseModel):
 class Teacher(DeletableBaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="teacher")
 
-    def get_fullname(self):
+    def get_full_name(self):
         return f'{self.user.first_name} {self.user.last_name}'
 
     def __str__(self):

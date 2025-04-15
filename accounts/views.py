@@ -34,14 +34,13 @@ class LoginView(generic.FormView):
     def get_success_url(self) -> str:
         user = self.request.user
         if user.is_authenticated:
-            # if user.is_staff:
-            #     return reverse('home_page')
-            if hasattr(user, "teacher"):
+            if user.is_staff:
+                return reverse('smartgrade_admin:teachers')
+            elif hasattr(user, "teacher"):
                 return reverse('assessment:teacher_dashboard')
             else:
-                pass
-                # return reverse('student:course_list')
-        return reverse('login')
+                return reverse('home_page')
+        return reverse('accounts:login')
 
 
 class CustomPasswordChangeView(PasswordChangeView):
