@@ -135,7 +135,18 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'smart_grade' / 'static',
      ]
+
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# STATIC_URL = 'static/'
+# STATIC_ROOT = BASE_DIR / "static"
+
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -170,3 +181,6 @@ import dj_database_url
 DATABASES = {
     "default": dj_database_url.parse(os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'))
 }
+
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
