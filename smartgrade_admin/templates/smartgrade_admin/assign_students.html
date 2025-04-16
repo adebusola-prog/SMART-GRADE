@@ -44,25 +44,32 @@
                 {% csrf_token %}
                 <h6 class="mb-3">Available Students</h6>
                 
-                {% if form.students.field.queryset.exists %}
-                  <div class="form-group">
+                {% if form.fields.students.queryset.count == 0 %}
+                {% if student_model_count == 0 %}
+                    <div class="alert alert-warning">
+                    There are no students in the system yet.
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                    All existing students are already assigned to this teacher.
+                    </div>
+                {% endif %}
+                {% else %}
+                <div class="form-group">
                     {% for checkbox in form.students %}
-                      <div class="form-check mb-2">
+                    <div class="form-check mb-2">
                         {{ checkbox.tag }}
                         <label class="form-check-label" for="{{ checkbox.id_for_label }}">
-                          {{ checkbox.choice_label }}
+                        {{ checkbox.choice_label }}
                         </label>
-                      </div>
+                    </div>
                     {% endfor %}
-                  </div>
-                  <button type="submit" class="btn btn-primary mt-3">
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">
                     <i class="fas fa-user-plus me-2"></i> Assign Selected Students
-                  </button>
-                {% else %}
-                  <div class="alert alert-warning">
-                    All available students are already assigned to this teacher.
-                  </div>
+                </button>
                 {% endif %}
+
               </form>
             </div>
           </div>
