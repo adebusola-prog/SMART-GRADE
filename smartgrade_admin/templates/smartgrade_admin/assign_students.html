@@ -9,7 +9,7 @@
           <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
             <div class="d-flex justify-content-between align-items-center px-4">
               <h6 class="text-white text-capitalize mb-0">
-                Assign Students to {{ teacher.user.get_full_name }}
+                Assign Students to {{ teacher.get_full_name }}
               </h6>
             </div>
           </div>
@@ -22,12 +22,13 @@
                 <div class="list-group">
                   {% for student in assigned_students %}
                     <div class="list-group-item d-flex justify-content-between align-items-center">
-                      {{ student.user.get_full_name }}
-                      <a href="{% url 'smartgrade_admin:admin_unassign_student' teacher.id student.id %}" 
-                         class="btn btn-sm btn-outline-danger"
-                         title="Unassign">
-                        <i class="fas fa-user-minus"></i>
-                      </a>
+                      {{ student.get_full_name }}
+                      <form method="POST" action="{% url 'smartgrade_admin:admin_unassign_student' teacher.id student.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Unassign">
+                          <i class="fas fa-user-minus"></i>
+                        </button>
+                      </form>
                     </div>
                   {% endfor %}
                 </div>

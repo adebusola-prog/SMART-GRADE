@@ -28,7 +28,6 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-
 ALLOWED_HOSTS = ['*']
 TEMPLATES_DIR = BASE_DIR / 'smart_grade' / 'templates'
 
@@ -147,7 +146,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# LOGIN_REDIRECT_URL = "smart_grade:"
+LOGIN_URL = "accounts:login"
 AUTH_USER_MODEL = 'accounts.User'
 
 # smtp configuration

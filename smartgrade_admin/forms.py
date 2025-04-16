@@ -16,6 +16,29 @@ class TeacherForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+    
+
+class TeacherStudentUpdateForm(forms.ModelForm):
+    gender = forms.ChoiceField(
+        choices=User.GENDER_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name', 'gender']  
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk and hasattr(self.instance, 'gender'):
+            self.initial['gender'] = self.instance.gender
+
 
 class StudentForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -39,11 +62,12 @@ class StudentForm(forms.ModelForm):
 #         model = Teacher
 #         fields = ['students']
 
+
 class AssignStudentForm(forms.ModelForm):
     students = forms.ModelMultipleChoiceField(
-        queryset=Student.objects.all(),
+        queryset=Student.objects.none(),
         widget=forms.CheckboxSelectMultiple,
-        label="Available Students"
+        required=False
     )
 
     class Meta:
@@ -52,9 +76,8 @@ class AssignStudentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['students'].label_from_instance = lambda obj: f"{obj.get_full_name()} ({obj.user.email})"
-        
         if self.instance.pk:
-            self.fields['students'].queryset = Student.objects.exclude(
-                id__in=self.instance.students.values_list('id', flat=True)
-            )
+            self.fields['students'].queryset = Student.objects.filter(is_current=True)
+
+        self.fields['students'].label_from_instance = lambda obj: obj.get_full_name()
+        

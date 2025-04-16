@@ -56,30 +56,33 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Student(DeletableBaseModel):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='students')
-    teachers = models.ManyToManyField("Teacher", related_name="students")
-    is_current= models.BooleanField(default=True)
+    user = models.OneToOneField(
+        User, 
+        on_delete=models.SET_NULL, null=True, 
+        related_name='student'
+    )
+    is_current = models.BooleanField(default=True)
     
     def get_full_name(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
     
-    def get_absolute_url(self):
-        return reverse('student_detail', args=[str(self.id)])
-    
     def __str__(self):
-        return f'{self.id}'
-
-    
+        return f'{self.get_full_name()}'
 
 class Teacher(DeletableBaseModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="teacher")
-
+    user = models.OneToOneField(
+        User, 
+        on_delete=models.SET_NULL, null=True, 
+        related_name="teacher"
+    )
+    students = models.ManyToManyField(
+        Student,
+        related_name="teachers",
+        blank=True
+    )
+    
     def get_full_name(self):
         return f'{self.user.first_name} {self.user.last_name}'
 
     def __str__(self):
-        return self.user.email
-
-    
-   
-        
+        return f'{self.get_full_name()} ({self.user.email})'

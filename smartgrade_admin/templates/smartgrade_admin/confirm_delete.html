@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card my-4">
+        <!-- Card Header -->
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-danger shadow-danger border-radius-lg pt-4 pb-3">
+            <div class="d-flex justify-content-between align-items-center px-4">
+              <h5 class="text-white text-capitalize mb-0">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                Confirm Deactivation
+              </h5>
+              <a href="{{ cancel_url }}" class="btn btn-sm btn-light mb-0">
+                <i class="fas fa-times me-1"></i> Close
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body px-4 pb-4 pt-4">
+          <!-- Warning Alert -->
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+              <div>
+                <h5 class="alert-heading">Warning!</h5>
+                <p class="mb-0">
+                  You are about to deactivate 
+                  <strong>{{ object_type|title }}</strong>: 
+                  <span class="text-dark">{{ object.user.get_full_name }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Details Card -->
+          <div class="card border-0 shadow-xs mb-4">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                {% if object_type == 'teacher' %}
+                <i class="fas fa-chalkboard-teacher text-primary me-3 fa-2x"></i>
+                {% else %}
+                <i class="fas fa-user-graduate text-primary me-3 fa-2x"></i>
+                {% endif %}
+                <div>
+                  <h6 class="mb-0">{{ object.user.get_full_name }}</h6>
+                  <p class="text-sm text-secondary mb-0">
+                    {{ object.user.email }}
+                    {% if object_type == 'student' and object.grade_level %}
+                    | Grade: {{ object.grade_level }}
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+              <hr class="horizontal dark">
+              <p class="text-sm">
+                <i class="fas fa-info-circle me-2 text-info"></i>
+                This action will revoke system access but preserve all records.
+              </p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <form method="POST">
+            {% csrf_token %}
+            <div class="d-flex justify-content-between mt-4">
+              <a href="{{ cancel_url }}" class="btn btn-lg btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i> Cancel
+              </a>
+              <button type="submit" class="btn btn-lg btn-danger">
+                <i class="fas fa-user-slash me-2"></i> Confirm Deactivation
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bg-gradient-danger {
+    background: linear-gradient(195deg, #f5365c 0%, #f56036 100%);
+  }
+  .alert-warning {
+    border-left: 5px solid #fb6340;
+    background-color: rgba(251, 99, 64, 0.1);
+  }
+  .card {
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+</style>
+{% endblock %}

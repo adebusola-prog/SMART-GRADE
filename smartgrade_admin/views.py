@@ -3,8 +3,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse 
 from accounts.models import User, Teacher, Student
-from .forms import TeacherForm, StudentForm, AssignStudentForm
+from .forms import TeacherForm, StudentForm, AssignStudentForm, TeacherStudentUpdateForm
 
 def admin_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
@@ -70,24 +71,44 @@ def create_student(request):
 @login_required
 @admin_required
 def update_teacher(request, teacher_id):
-    teacher = Teacher.active_objects.filter(id=teacher_id).first()
-    form = TeacherForm(request.POST or None, instance=teacher.user)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Teacher updated successfully.')
-        return redirect('admin_list_teachers')
-    return render(request, 'smartgrade_admin/teachers_form.html', {'form': form})
+    teacher = get_object_or_404(Teacher, id=teacher_id)
+    
+    if request.method == 'POST':
+        form = TeacherStudentUpdateForm(request.POST, instance=teacher.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Teacher updated successfully.')
+            return redirect('smartgrade_admin:teachers')
+    else:
+        form = TeacherStudentUpdateForm(instance=teacher.user)
+        if hasattr(teacher.user, 'gender'):
+            form.initial['gender'] = teacher.user.gender
+    
+    return render(request, 'smartgrade_admin/teacher_update.html', {
+        'form': form,
+        'teacher': teacher
+    })
 
 @login_required
 @admin_required
 def update_student(request, student_id):
-    student = Student.active_objects.filter(id=student_id).first()
-    form = StudentForm(request.POST or None, instance=student.user)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Student updated successfully.')
-        return redirect('admin_list_students')
-    return render(request, 'smartgrade_admin/students_form.html', {'form': form})
+    student = get_object_or_404(Student, id=student_id)
+    
+    if request.method == 'POST':
+        form = TeacherStudentUpdateForm(request.POST, instance=student.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Student updated successfully.')
+            return redirect('smartgrade_admin:students')
+    else:
+        form = TeacherStudentUpdateForm(instance=student.user)
+        if hasattr(student.user, 'gender'):
+            form.initial['gender'] = student.user.gender
+    
+    return render(request, 'smartgrade_admin/student_update.html', {
+        'form': form,
+        'student': student
+    })
 
 # @login_required
 # @admin_required
@@ -108,14 +129,18 @@ def assign_students_to_teacher(request, teacher_id):
     if request.method == 'POST':
         form = AssignStudentForm(request.POST, instance=teacher)
         if form.is_valid():
-            form.save()
-            messages.success(request, f'Students successfully assigned to {teacher.get_full_name()}')
+            new_students = form.cleaned_data['students']
+            
+            for student in new_students:
+                teacher.students.add(student)  
+            
+            messages.success(request, "Students assigned successfully!")
             return redirect('smartgrade_admin:teachers')
     else:
         form = AssignStudentForm(instance=teacher)
 
-    assigned_students = teacher.students.all()
-    
+    assigned_students = teacher.students.filter(is_current=True)
+
     return render(request, 'smartgrade_admin/assign_students.html', {
         'form': form,
         'teacher': teacher,
@@ -129,26 +154,58 @@ def unassign_student(request, teacher_id, student_id):
     student = get_object_or_404(Student, id=student_id)
     
     if request.method == 'POST':
-        teacher.students.remove(student)
-        messages.success(request, f'{student.user.get_full_name()} unassigned from {teacher.user.get_full_name()}')
+        print("POST")
+        if student in teacher.students.all(): 
+            teacher.students.remove(student)  
+            messages.success(request, f'Unassigned {student.get_full_name()}')
+        else:
+            messages.warning(request, 'This student was not assigned to the teacher')
     
     return redirect('smartgrade_admin:admin_assign_students', teacher_id=teacher.id)
 
 @login_required
 @admin_required
 def delete_teacher(request, teacher_id):
-    teacher = Teacher.active_objects.filter(id=teacher_id).first()
-    teacher.user.is_active = False
-    teacher.save()
-    messages.success(request, 'Teacher deleted successfully.')
-    return redirect('smartgrade_admin:teachers')
+    if request.method == 'POST':
+        teacher = get_object_or_404(Teacher, id=teacher_id)
+        try:
+            teacher.user.is_active = False
+            teacher.user.save()
+            teacher.is_deleted = True
+            teacher.save()
+            
+            messages.success(request, f'Teacher {teacher.get_full_name()} was successfully deactivated.')
+        except Exception as e:
+            messages.error(request, f'Error deactivating teacher: {str(e)}')
+        return redirect('smartgrade_admin:teachers')
+    
+    teacher = get_object_or_404(Teacher, id=teacher_id)
+    return render(request, 'smartgrade_admin/confirm_delete.html', {
+        'object': teacher,
+        'object_type': 'teacher',
+        'cancel_url': reverse('smartgrade_admin:teachers')
+    })
 
 @login_required
 @admin_required
 def delete_student(request, student_id):
-    student = Student.active_objects.filter(id=student_id).first()
-    student.user.is_active = False
-    student.save()
-    messages.success(request, 'Student deleted successfully.')
-    return redirect('smartgrade_admin:admin_list_students')
+    if request.method == 'POST':
+        student = get_object_or_404(Student, id=student_id)
+        try:
+            student.user.is_active = False
+            student.user.save()
+            student.is_deleted = True
+            student.save()
+            
+            messages.success(request, f'Student {student.get_full_name()} was successfully deactivated.')
+        except Exception as e:
+            messages.error(request, f'Error deactivating student: {str(e)}')
+        return redirect('smartgrade_admin:students')
+    
+    student = get_object_or_404(Student, id=student_id)
+    return render(request, 'smartgrade_admin/confirm_delete.html', {
+        'object': student,
+        'object_type': 'student',
+        'cancel_url': reverse('smartgrade_admin:students')
+    })
 
