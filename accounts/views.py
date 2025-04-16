@@ -35,7 +35,7 @@ class LoginView(generic.FormView):
         user = self.request.user
         if user.is_authenticated:
             if user.is_staff:
-                return reverse('smartgrade_admin:teachers')
+                return reverse('home_page')
             elif hasattr(user, "teacher"):
                 return reverse('assessment:teacher_dashboard')
             else:
